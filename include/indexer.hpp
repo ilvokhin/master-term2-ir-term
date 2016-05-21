@@ -29,6 +29,11 @@ namespace ir
 
     bool operator < (const posting& x, const posting& y);
 
+    struct full_cmp
+    {
+      bool operator()(const posting& x, const posting& y) const;
+    };
+
     std::ostream& operator << (std::ostream& os, const posting& p);
 
     struct indexer

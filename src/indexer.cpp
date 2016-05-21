@@ -32,6 +32,11 @@ namespace ir
 
     bool operator < (const posting& x, const posting& y)
     {
+      return x.key < y.key;
+    }
+
+    bool full_cmp::operator()(const posting& x, const posting& y) const
+    {
       return (std::tie(x.key, x.group_id, x.post_id, x.pos) <
               std::tie(y.key, y.group_id, y.post_id, y.pos));
     }
@@ -104,7 +109,7 @@ namespace ir
 
     void indexer::save(std::ostream& os)
     {
-      std::sort(index_.begin(), index_.end());
+      std::sort(index_.begin(), index_.end(), full_cmp());
       boost::archive::text_oarchive oarch(os);
       oarch << index_;
     }

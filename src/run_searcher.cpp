@@ -24,6 +24,9 @@ int main(int argc, char* argv[])
     std::wstring wide_line = ir::common::bytes_to_wide(line);
     std::vector<std::wstring> terms = ir::common::make_terms(wide_line);
 
+    for(size_t i = 0; i < terms.size(); i++)
+      std::cout << ir::common::wide_to_bytes(terms[i]) << std::endl;
+
     std::vector<ir::indexer::posting> postings = searcher.handle_query(terms);
   
     for(auto& posting : postings) {

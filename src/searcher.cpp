@@ -13,7 +13,7 @@ namespace ir
   {
     bool operator < (const merge_iter& x, const merge_iter& y)
     {
-      return *(x.iter) < *(y.iter);
+      return indexer::full_cmp()(*(x.iter), *(y.iter));
     }
 
     searcher::searcher(const std::string& filename)
