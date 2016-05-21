@@ -1,0 +1,3 @@
+[submodule "OleanderStemmingLibrary"]
+	path = OleanderStemmingLibrary
+	url = https://github.com/OleanderSoftware/OleanderStemmingLibrary.git
