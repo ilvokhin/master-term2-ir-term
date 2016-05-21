@@ -1,18 +1,112 @@
 #include <iostream>
+#include <sstream>
+
+#include <boost/format.hpp>
+#include <boost/optional.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/serialization/serialization.hpp>
 
 #include "common.hpp"
+#include "indexer.hpp"
 
-int main()
+namespace ir
 {
-  std::string raw_word;
+  namespace indexer
+  {
 
-  while(std::cin >> raw_word) {
-    std::wstring wide_raw_word = common::bytes_to_wide(raw_word);
-    std::wstring stemmed = common::stem_word(wide_raw_word);
+    template<class Archive>
+    void posting::serialize(Archive & ar, const unsigned int version)
+    {
+        ar & key;
+        ar & group_id;
+        ar & post_id;
+        ar & pos;
+    }
 
-    std::cout << raw_word << '\t' << common::wide_to_bytes(stemmed) << std::endl;
-    std::cout << "OK" << std::endl;
+    bool operator < (const posting& x, const posting& y)
+    {
+      return x.key < y.key;
+    }
+
+    std::ostream& operator << (std::ostream& os, const posting& p)
+    {
+      os << boost::format("key = %lu, group_id = %d, post_id = %d, pos = %d")
+        % p.key 
+        % p.group_id
+        % p.post_id
+        % p.pos;
+      return os;
+    }
+
+    // 1. parse json
+    // 2. skip trash
+    // 3. tokenize text
+    // 4. normalize tokens (upper + stem)
+    int indexer::add_line(const std::string& raw_line)
+    {
+      std::vector<std::string> line_parts;
+      boost::split(line_parts, raw_line, boost::is_any_of("\t"));
+      if(line_parts.size() != 2)
+        return 0;
+
+      int group_id = -1 * boost::lexical_cast<int>(line_parts[0]);
+      std::wstringstream json;
+      json.str(common::bytes_to_wide(line_parts[1]));
+
+      boost::property_tree::wptree tree;
+      boost::property_tree::read_json(json, tree);
+
+      int added = 0;
+
+      for(auto& item : tree.get_child(L"response")) {
+        boost::optional<std::wstring> type =
+          item.second.get_optional<std::wstring>(L"post_type");
+
+        if(!type || *type != L"post")
+            continue;
+
+        boost::optional<std::wstring> text =
+          item.second.get_optional<std::wstring>(L"text");
+
+        if(!text || (*text).empty())
+          continue;
+
+        boost::optional<int> id = item.second.get_optional<int>(L"id");
+        if(!id)
+            continue;
+
+        std::vector<std::wstring> terms = common::make_terms(*text);
+        int n = terms.size();
+        for(int i = 0; i < n; i++) {
+          size_t term_hash = common::murmur(terms[i]);
+          posting cur_pos(term_hash, group_id, *id, i);
+          index_.push_back(cur_pos);
+          added++;
+        }
+      }
+
+      return added;
+
+    }
+
+    void indexer::save(std::ostream& os)
+    {
+      std::sort(index_.begin(), index_.end());
+      boost::archive::text_oarchive oarch(os);
+      oarch << index_;
+    }
+
+    void indexer::load(std::istream& is)
+    {
+      boost::archive::text_iarchive iarch(is);
+      iarch >> index_;
+    }
+
   }
-
-  return 0;
 }
