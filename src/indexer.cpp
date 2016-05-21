@@ -87,6 +87,11 @@ namespace ir
         int n = terms.size();
         for(int i = 0; i < n; i++) {
           size_t term_hash = common::murmur(terms[i]);
+          // skip stopwords
+          if(std::binary_search(stopwords_.begin(), stopwords_.end(),
+                                term_hash))
+            continue;
+
           posting cur_pos(term_hash, group_id, *id, i);
           index_.push_back(cur_pos);
           added++;
@@ -108,6 +113,19 @@ namespace ir
     {
       boost::archive::text_iarchive iarch(is);
       iarch >> index_;
+    }
+
+    void indexer::load_stopwords(const std::string& stopwords)
+    {
+      std::fstream sw(stopwords);
+      std::string line;
+      while(std::getline(sw, line)) {
+        std::wstring wide_line = common::bytes_to_wide(line);
+        std::vector<std::wstring> terms = common::make_terms(wide_line);
+        size_t term_hash = common::murmur(terms[0]);
+        stopwords_.push_back(term_hash); 
+      }
+      std::sort(stopwords_.begin(), stopwords_.end());
     }
 
   }

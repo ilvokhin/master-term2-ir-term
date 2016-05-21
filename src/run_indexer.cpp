@@ -9,6 +9,8 @@ int main()
 
   ir::indexer::indexer indexer;
 
+  indexer.load_stopwords("deps/stopwords.txt");
+
   size_t added = 0;
   std::string line;
 

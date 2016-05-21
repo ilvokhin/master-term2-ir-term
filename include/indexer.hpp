@@ -33,13 +33,17 @@ namespace ir
 
     struct indexer
     {
+
         int add_line(const std::string& raw_line);
 
         void save(std::ostream& os);
 
         void load(std::istream& is);
 
+        void load_stopwords(const std::string& stopwords);
+
         std::vector<posting> index_;
+        std::vector<size_t> stopwords_;
     };
 
   }
