@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <tuple>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
@@ -31,7 +32,8 @@ namespace ir
 
     bool operator < (const posting& x, const posting& y)
     {
-      return x.key < y.key;
+      return (std::tie(x.key, x.group_id, x.post_id, x.pos) <
+              std::tie(y.key, y.group_id, y.post_id, y.pos));
     }
 
     std::ostream& operator << (std::ostream& os, const posting& p)
