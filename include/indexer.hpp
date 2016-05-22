@@ -37,13 +37,13 @@ namespace ir
 
     std::ostream& operator << (std::ostream& os, const posting& p);
 
+    typedef bi::managed_mapped_file mapped_file;
+    typedef bi::allocator<posting,
+                          mapped_file::segment_manager> posting_alloc;
+    typedef std::vector<posting, posting_alloc> mapped_vector;
+
     struct indexer
     {
-      typedef bi::managed_mapped_file mapped_file;
-      typedef bi::allocator<posting,
-                              mapped_file::segment_manager> posting_alloc;
-      typedef std::vector<posting, posting_alloc> mapped_vector;
-
       typedef mapped_vector::const_iterator pos_iter;
       typedef std::pair<pos_iter, pos_iter> pos_range;
 

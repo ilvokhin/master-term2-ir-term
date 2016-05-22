@@ -1,8 +1,9 @@
 #ifndef SEARCHER_HPP_
 #define SEARCHER_HPP_
 
-#include <vector>
 #include <utility>
+#include <vector>
+#include <queue>
 
 #include "common.hpp"
 #include "indexer.hpp"
@@ -28,6 +29,44 @@ namespace ir
       bool operator < (const merge_iter& x, const merge_iter& y);
       bool operator > (const merge_iter& x, const merge_iter& y);
 
+      std::vector<indexer::posting>
+        merge_n(const std::vector<pos_range>& ranges);
+
+      std::vector<indexer::posting>
+        intersect_two(const pos_range& x_begin, const pos_range& x_end,
+                      const pos_range& y_begin, const pos_range& y_end);
+
+      std::vector<indexer::posting>
+        intersect_n(const std::vector<pos_range>& ranges);
+
+      template <typename T>
+      void merge_n_impl(const std::vector<pos_range>& ranges, T& out)
+      {
+        std::priority_queue<merge_iter,
+                            std::vector<merge_iter>,
+                            std::greater<merge_iter> > pq;
+
+        for(size_t i = 0; i < ranges.size(); i++) {
+          if(ranges[i].first == ranges[i].second)
+            continue;
+
+          pq.push(merge_iter(ranges[i].first, i));
+        }
+
+        while(!pq.empty()) {
+          auto p_pos = pq.top();
+          pq.pop();
+
+          auto& iter = p_pos.iter;
+          int from = p_pos.from;
+
+          out.push_back(*iter);
+          iter++;
+          if(iter != ranges[from].second)
+            pq.push(merge_iter(iter, from));
+        }
+      }
+
       class searcher
       {
         public:
@@ -39,9 +78,6 @@ namespace ir
 
         private:
           pos_range calc_postings(const std::wstring& term) const;
-
-          std::vector<indexer::posting>
-            intersect_n(const std::vector<pos_range>& ranges) const;
 
           indexer::indexer indexer_;
       };
