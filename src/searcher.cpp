@@ -33,21 +33,87 @@ namespace ir
       return out;
     }
 
+    
     std::vector<indexer::posting>
-      intersect_two(const pos_range& x_begin,
-                    const pos_range& x_end,
-                    const pos_range& y_begin,
-                    const pos_range& y_end)
+      intersect_two_impl(const Iter1& x_begin, const Iter1& x_end,
+                         const Iter2& y_begin, const Iter2& y_end,
+                         size_t window_size)
     {
-      // TODO
-      return std::vector<indexer::posting>();
-    }
+      using indexer::doc_id;
+      std::vector<indexer::posting> out;
+
+      Iter1 x_cur = x_begin;
+      Iter2 y_cur = y_begin;
+
+      while(x_cur != x_end && y_cur != y_end) {
+        if(doc_id(*x_cur) == doc_id(*y_cur)) {
+          std::vector<indexer::posting> cur_out;
+          auto cur_doc_id = doc_id(*x_cur);
+          while(doc_id(*x_cur) == cur_doc_id) {
+            while(doc_id(*y_cur) == cur_doc_id) {
+              int y_cur_pos = (*y_cur).pos;
+              if(std::abs(x_cur->pos - y_cur_pos) <= window_size)
+                cur_out.push_back(*y_cur);
+              else if(y_cur_pos > x_cur->pos)
+                break;
+              y_cur++;
+            }
+            while(!cur_out.empty() &&
+                  std::abs(x_cur->pos - cur_out.back().pos) > window_size)
+              cur_out.pop_back();
+
+              if(!cur_out.empty()) {
+                out.push_back(*x_cur);
+                for(auto & elem : cur_out)
+                  out.push_back(elem);
+              }
+
+            x_cur++;
+          }
+        } else if(doc_id(*x_cur) < doc_id(*y_cur)) {
+            x_cur++;
+        } else {
+            y_cur++;
+        }
+      }
+
+        return out;
+      }
 
     std::vector<indexer::posting>
       intersect_n(const std::vector<pos_range>& ranges)
     {
-      // TODO
-      return std::vector<indexer::posting>();
+      const size_t window_size = 2 * ranges.size();
+      std::vector<size_t> order;
+      order.reserve(ranges.size());
+
+      for(size_t i = 0; i < ranges.size(); i++)
+        if(ranges[i].first != ranges[i].second)
+          order.push_back(i);
+
+      if(order.empty())
+        std::vector<indexer::posting>();
+
+      std::sort(order.begin(), order.end(),
+                [&](const size_t& x, const size_t& y)
+                {
+                  return std::distance(ranges[x].first, ranges[y].second)
+                    < std::distance(ranges[y].first, ranges[y].second);
+                });
+
+      std::vector<indexer::posting> out(ranges[order[0]].first,
+                                        ranges[order[0]].second);
+
+      for(size_t i = 1; i < order.size(); i++) {
+        size_t pos = order[i];
+        out = intersect_two_impl(out.begin(), out.end(),
+                                 ranges[pos].first, ranges[pos].second,
+                                 window_size);
+        if(out.empty())
+          break;
+      }
+
+      return out;
     }
 
     boost::property_tree::ptree make_json(const indexer::posting& p)
@@ -74,12 +140,12 @@ namespace ir
       for(size_t i = 0; i < terms.size(); i++)
         postings.push_back(calc_postings(terms[i]));
 
-      return merge_n(postings);
+      return intersect_n(postings);
     }
 
     std::string searcher::handle_raw_query(const std::string& raw_query) const
     {
-      std::wstring wide_query = common::bytes_to_wide(common::parse_raw_query(raw_query));
+      std::wstring wide_query = common::parse_raw_query(common::bytes_to_wide(raw_query));
       if(wide_query.empty())
         return "{}";
 

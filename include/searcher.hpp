@@ -4,6 +4,8 @@
 #include <utility>
 #include <vector>
 #include <queue>
+#include <tuple>
+#include <cmath>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -68,6 +70,14 @@ namespace ir
             pq.push(merge_iter(iter, from));
         }
       }
+      
+      typedef std::vector<indexer::posting>::const_iterator Iter1;
+      typedef indexer::mapped_vector::const_iterator Iter2;
+
+      std::vector<indexer::posting>
+        intersect_two_impl(const Iter1& x_begin, const Iter1& x_end,
+                           const Iter2& y_begin, const Iter2& y_end,
+                           size_t window_size);
 
       boost::property_tree::ptree make_json(const indexer::posting& p);
 

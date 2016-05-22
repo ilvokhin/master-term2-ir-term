@@ -24,6 +24,11 @@ namespace ir
       return x.key < y.key;
     }
 
+    std::tuple<int, int> doc_id(const posting& p)
+    {
+      return std::tie(p.group_id, p.post_id);
+    }
+
     bool full_cmp::operator()(const posting& x, const posting& y) const
     {
       return (std::tie(x.key, x.group_id, x.post_id, x.pos) <

@@ -124,14 +124,14 @@ namespace ir
         return terms;
       }
 
-      std::string parse_raw_query(const std::string& raw_query)
+      std::wstring parse_raw_query(const std::wstring& raw_query)
       {
-        static const std::string query_prefix = "q=";
-        size_t pos = raw_query.find_first_of(query_prefix);
-        if(pos == std::string::npos)
-          return std::string();
+        static const std::wstring query_prefix = L"q=";
+        size_t pos = raw_query.find(query_prefix);
+        if(pos == std::wstring::npos)
+          return std::wstring();
 
-        return raw_query.substr(pos);
+        return raw_query.substr(pos + query_prefix.size());
       }
 
   }

@@ -28,7 +28,7 @@ namespace ir
 
     std::vector<std::wstring> make_terms(const std::wstring& text);
 
-    std::string parse_raw_query(const std::string& raw_query);
+    std::wstring parse_raw_query(const std::wstring& raw_query);
   }
 }
 

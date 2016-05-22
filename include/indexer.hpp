@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <tuple>
 
 #include <boost/interprocess/managed_mapped_file.hpp>
 
@@ -29,6 +30,8 @@ namespace ir
     };
 
     bool operator < (const posting& x, const posting& y);
+
+    std::tuple<int, int> doc_id(const posting& p);
 
     struct full_cmp
     {
