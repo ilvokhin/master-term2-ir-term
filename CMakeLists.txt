@@ -29,6 +29,7 @@ set(SOURCES
   src/run_merger.cpp
   src/tcp_worker.cpp
   src/run_calc_idf.cpp
+  src/get_idf.cpp
 )
 
 add_executable(run_indexer src/run_indexer.cpp)
@@ -45,3 +46,7 @@ target_link_libraries(tcp_worker indexer searcher common ${Boost_LIBRARIES})
 
 add_executable(run_calc_idf src/run_calc_idf.cpp)
 target_link_libraries(run_calc_idf idf_table indexer common ${Boost_LIBRARIES})
+
+add_executable(get_idf src/get_idf.cpp)
+target_link_libraries(get_idf idf_table common ${Boost_LIBRARIES})
+
