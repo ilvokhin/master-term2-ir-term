@@ -16,10 +16,14 @@ namespace ir
       return indexer::full_cmp()(*(x.iter), *(y.iter));
     }
 
+    bool operator > (const merge_iter& x, const merge_iter& y)
+    {
+      return indexer::full_cmp()(*(y.iter), *(x.iter));
+    }
+
     searcher::searcher(const std::string& filename)
     {
-      std::fstream file_stream(filename);
-      indexer_.load(file_stream);
+      indexer_.load(filename);
     }
 
     std::vector<indexer::posting>
@@ -39,19 +43,21 @@ namespace ir
       size_t term_hash = common::murmur(term);
       indexer::posting term_pos(term_hash);
 
-      return std::equal_range(indexer_.index_.begin(),
-                              indexer_.index_.end(), term_pos);
+      return indexer_.calc_postings(term_pos);
     }
 
     std::vector<indexer::posting>
       searcher::intersect_n(const std::vector<pos_range>& ranges) const
     {
-      std::priority_queue<merge_iter> pq;
+      std::priority_queue<merge_iter,
+                          std::vector<merge_iter>,
+                          std::greater<merge_iter> > pq;
+
       std::vector<indexer::posting> out;
 
       for(size_t i = 0; i < ranges.size(); i++) {
         if(ranges[i].first == ranges[i].second)
-          return out;
+          continue;
 
         pq.push(merge_iter(ranges[i].first, i));
       }

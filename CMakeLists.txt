@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-find_package(Boost REQUIRED serialization)
+find_package(Boost REQUIRED serialization filesystem system)
 
 SET(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11 -pedantic")
 

@@ -2,10 +2,15 @@
 
 #include "indexer.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
   std::cin.sync_with_stdio(false);
   std::cout.sync_with_stdio(false);
+
+  if(argc == 1) {
+    std::cerr << "Where I should save your index, dude?" << std::endl;
+    return 1;
+  }
 
   ir::indexer::indexer indexer;
 
@@ -20,7 +25,7 @@ int main()
 
   std::cerr << added << std::endl;
 
-  indexer.save(std::cout);
+  indexer.save(argv[1]);
 
   return 0;
 }

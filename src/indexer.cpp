@@ -1,9 +1,11 @@
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <tuple>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -20,15 +22,6 @@ namespace ir
 {
   namespace indexer
   {
-
-    template<class Archive>
-    void posting::serialize(Archive & ar, const unsigned int version)
-    {
-        ar & key;
-        ar & group_id;
-        ar & post_id;
-        ar & pos;
-    }
 
     bool operator < (const posting& x, const posting& y)
     {
@@ -107,17 +100,24 @@ namespace ir
 
     }
 
-    void indexer::save(std::ostream& os)
+    void indexer::save(const std::string& filename)
     {
       std::sort(index_.begin(), index_.end(), full_cmp());
-      boost::archive::text_oarchive oarch(os);
-      oarch << index_;
+      const size_t magic = 8192;
+      size_t file_size = sizeof(index_[0]) * index_.size() + magic;
+
+      boost::filesystem::remove(filename);
+      mapped_file_ptr_.reset(new mapped_file(bi::open_or_create,
+                                            filename.c_str(), file_size));
+      mapped_index_ptr_ = mapped_file_ptr_->construct<mapped_vector>("index")
+                          (index_.begin(), index_.end(),
+                           posting_alloc(mapped_file_ptr_->get_segment_manager()));
     }
 
-    void indexer::load(std::istream& is)
+    void indexer::load(const std::string& filename)
     {
-      boost::archive::text_iarchive iarch(is);
-      iarch >> index_;
+      mapped_file_ptr_.reset(new mapped_file(bi::open_read_only, filename.c_str()));
+      mapped_index_ptr_ = mapped_file_ptr_->find<mapped_vector>("index").first;
     }
 
     void indexer::load_stopwords(const std::string& stopwords)
@@ -131,6 +131,12 @@ namespace ir
         stopwords_.push_back(term_hash); 
       }
       std::sort(stopwords_.begin(), stopwords_.end());
+    }
+
+    indexer::pos_range indexer::calc_postings(const posting& posting) const
+    {
+      return std::equal_range(mapped_index_ptr_->begin(),
+                              mapped_index_ptr_->end(), posting);
     }
 
   }

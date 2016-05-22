@@ -12,7 +12,7 @@ namespace ir
   namespace searcher
   {
 
-      typedef std::vector<indexer::posting>::const_iterator pos_iter;
+      typedef indexer::indexer::pos_iter pos_iter;
       typedef std::pair<pos_iter, pos_iter> pos_range;
 
       struct merge_iter
@@ -26,6 +26,7 @@ namespace ir
       };
 
       bool operator < (const merge_iter& x, const merge_iter& y);
+      bool operator > (const merge_iter& x, const merge_iter& y);
 
       class searcher
       {
