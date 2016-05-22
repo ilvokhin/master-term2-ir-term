@@ -5,6 +5,8 @@
 #include <vector>
 #include <queue>
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "common.hpp"
 #include "indexer.hpp"
 
@@ -67,6 +69,8 @@ namespace ir
         }
       }
 
+      boost::property_tree::ptree make_json(const indexer::posting& p);
+
       class searcher
       {
         public:
@@ -76,8 +80,12 @@ namespace ir
           std::vector<indexer::posting>
             handle_query(const std::vector<std::wstring>& terms) const;
 
+          std::string handle_raw_query(const std::string& raw_query) const;
+
         private:
           pos_range calc_postings(const std::wstring& term) const;
+          std::string
+            serialize_response(const std::vector<indexer::posting>& p) const;
 
           indexer::indexer indexer_;
       };

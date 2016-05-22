@@ -35,7 +35,8 @@ public:
   void handle_read(const boost::system::error_code& error, size_t bytes_transferred)
   {
     if (!error) {
-      boost::asio::async_write(socket_, boost::asio::buffer(data_, bytes_transferred),
+      std::string response = searcher_ptr_->handle_raw_query(data_);
+      boost::asio::async_write(socket_, boost::asio::buffer(response),
                                boost::bind(&session::handle_write, this,
                                boost::asio::placeholders::error));
     }
@@ -57,7 +58,7 @@ public:
 
 private:
   tcp::socket socket_;
-  enum { max_length = 32768 };
+  enum { max_length = 1024*1024 };
   char data_[max_length];
   ir::searcher::searcher* searcher_ptr_;
 };

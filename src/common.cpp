@@ -124,5 +124,15 @@ namespace ir
         return terms;
       }
 
+      std::string parse_raw_query(const std::string& raw_query)
+      {
+        static const std::string query_prefix = "q=";
+        size_t pos = raw_query.find_first_of(query_prefix);
+        if(pos == std::string::npos)
+          return std::string();
+
+        return raw_query.substr(pos);
+      }
+
   }
 }

@@ -1,6 +1,8 @@
 #include <utility>
 
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "merger.hpp"
 #include "indexer.hpp"
