@@ -92,7 +92,7 @@ namespace ir
           order.push_back(i);
 
       if(order.empty())
-        std::vector<indexer::posting>();
+        return std::vector<indexer::posting>();
 
       std::sort(order.begin(), order.end(),
                 [&](const size_t& x, const size_t& y)
