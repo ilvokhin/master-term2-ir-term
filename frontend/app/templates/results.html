@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% from 'result.html' import result %}
+
+
+<body class="body--serp"> 
+  <div class="site-wrapper js-site-wrapper">
+    <div class="header-wrap js-header-wrap" id="header_wrapper">
+      <div class="header cw" id="header">
+        <div class="header__search-wrap">
+          <a class="header__logo-wrap" href="/" tabindex="-1"><span class=
+          "header__logo">ВГруппах</span></a>
+
+          <div class="header__content header__search">
+            <form action="/" class="search--adv search--header" id=
+            "search_form" method="get" name="x">
+              <input autocomplete="off" class="search__input--adv js-search-input" id="search_form_input" name="q" tabindex="1" type="text" value="{{ query }}">
+              <input id="search_button" class="search__button js-search-button" tabindex="2" type="submit" value="S">
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+      <div class="results--sidebar--mid js-results-sidebar-mid">
+        <span class="btn--top js-scroll-top-button" id="back-to-top">⬆</span>
+      </div>
+
+      <div class="cw">
+        <div class="results-wrapper" id="links_wrapper">
+          <div class="results full-urls" id="links">
+            
+            {% for item in results %}
+            {{ result(item.group_id, item.post_id, item.title, item.snippet, query) }}
+            {% endfor %}
+
+            <div class="result result--more" id="rld-1">
+              <a class="result--more__btn btn--alt btn btn--full" href="javascript:;">Ещё</a>
+            </div>
+
+
+            <div id="rrd-1" style="display: none;">
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+
+    <div id="bottom_spacing2">
+    </div>
+
+  </div>
+</body>
+
+{% endblock %}
