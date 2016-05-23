@@ -89,13 +89,15 @@ namespace ir
           std::vector<indexer::posting>
             handle_query(const std::vector<std::wstring>& terms) const;
 
-          std::string handle_raw_query(const std::string& raw_query) const;
+          std::string handle_raw_query(const std::string& raw_query,
+                                       bool pretty = false) const;
 
         private:
           pos_range calc_postings(const std::wstring& term) const;
           std::string
             serialize_response(const std::vector<std::wstring>& terms,
-                               const std::vector<doc>& doc) const;
+                               const std::vector<doc>& doc,
+                               bool pretty) const;
 
           indexer::indexer indexer_;
           ranker ranker_;

@@ -134,7 +134,7 @@ namespace ir
       return intersect_n(postings);
     }
 
-    std::string searcher::handle_raw_query(const std::string& raw_query) const
+    std::string searcher::handle_raw_query(const std::string& raw_query, bool pretty) const
     {
       std::wstring wide_query = common::parse_raw_query(common::bytes_to_wide(raw_query));
       if(wide_query.empty())
@@ -144,12 +144,13 @@ namespace ir
       std::vector<indexer::posting> postings = handle_query(terms);
       std::vector<doc> docs = ranker_.calc_ranked_docs(postings);
 
-      return serialize_response(terms, docs);
+      return serialize_response(terms, docs, pretty);
     }
 
     std::string
       searcher::serialize_response(const std::vector<std::wstring>& terms,
-                                   const std::vector<doc>& docs) const
+                                   const std::vector<doc>& docs,
+                                   bool pretty) const
     {
       boost::property_tree::ptree tree;
       boost::property_tree::ptree json_docs;
@@ -170,7 +171,7 @@ namespace ir
       tree.add_child("terms", json_terms);
 
       std::stringstream stream;
-      boost::property_tree::write_json(stream, tree, false);
+      boost::property_tree::write_json(stream, tree, pretty);
       return stream.str();
     }
 

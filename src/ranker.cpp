@@ -10,6 +10,11 @@ namespace ir
   namespace searcher
   {
 
+    bool operator < (const doc& x, const doc& y)
+    {
+      return x.rank < y.rank;
+    }
+
     boost::property_tree::ptree make_json(const doc& doc)
     {
       boost::property_tree::ptree tree;
@@ -37,6 +42,8 @@ namespace ir
       for(auto& kv : doc_groups)
         docs.push_back(calc_score_bm15(kv.second));
 
+      std::sort(docs.rbegin(), docs.rend());
+
       return docs;
     }
 
@@ -57,6 +64,9 @@ namespace ir
         term_cnt++;
         prev_term_id = postings[i].key;
       }
+
+      float term_rank = (term_cnt * (k_1 + 1.0f)) / (term_cnt + k_1);
+      doc.rank += table_.get_idf(prev_term_id) * term_rank;
 
       return doc;
     }

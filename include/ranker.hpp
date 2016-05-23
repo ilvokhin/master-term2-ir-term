@@ -23,6 +23,8 @@ namespace ir
       float rank;
     };
 
+    bool operator < (const doc& x, const doc& y);
+
     boost::property_tree::ptree  make_json(const doc& doc);
 
     class ranker
