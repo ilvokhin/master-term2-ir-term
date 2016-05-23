@@ -155,7 +155,7 @@ namespace ir
       boost::property_tree::ptree json_docs;
       boost::property_tree::ptree json_terms;
 
-      for(size_t i = 0; i < docs.size(); i++) {
+      for(size_t i = 0; i < std::min(docs.size(), size_t(100)); i++) {
         auto single = make_json(docs[i]);
         json_docs.push_back(std::make_pair("", single));
       }
