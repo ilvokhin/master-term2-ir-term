@@ -5,7 +5,8 @@ set -x
 bin=tmp
 threads=8
 
+src=/mnt/BAZA/raw_data2
 
-src=~/crawler/3kk-5kk
-
-time ls $src/*out | xargs -I{} -P$threads bash -c "cat {} | $bin/run_indexer {}.bin"
+for part in /mnt/BAZA/raw_data2/*; do
+  time ls $part/*.gz | xargs -I{} -P$threads bash -c "zcat {} | $bin/run_indexer {}.bin"
+done

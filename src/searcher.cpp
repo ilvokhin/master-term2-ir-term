@@ -116,19 +116,10 @@ namespace ir
       return out;
     }
 
-    boost::property_tree::ptree make_json(const indexer::posting& p)
+    searcher::searcher(const std::string& index, const std::string& idf):
+      ranker_(idf)
     {
-      boost::property_tree::ptree tree;
-      tree.put("key", boost::lexical_cast<std::string>(p.key));
-      tree.put("group_id", boost::lexical_cast<std::string>(p.group_id));
-      tree.put("post_id", boost::lexical_cast<std::string>(p.post_id));
-      tree.put("pos", boost::lexical_cast<std::string>(p.pos));
-      return tree;
-    }
-
-    searcher::searcher(const std::string& filename)
-    {
-      indexer_.load(filename);
+      indexer_.load(index);
     }
 
     std::vector<indexer::posting>
@@ -151,22 +142,33 @@ namespace ir
 
       std::vector<std::wstring> terms = common::make_terms(wide_query);
       std::vector<indexer::posting> postings = handle_query(terms);
+      std::vector<doc> docs = ranker_.calc_ranked_docs(postings);
 
-      return serialize_response(postings);
+      return serialize_response(terms, docs);
     }
 
     std::string
-      searcher::serialize_response(const std::vector<indexer::posting>& p) const
+      searcher::serialize_response(const std::vector<std::wstring>& terms,
+                                   const std::vector<doc>& docs) const
     {
       boost::property_tree::ptree tree;
-      boost::property_tree::ptree postings;
+      boost::property_tree::ptree json_docs;
+      boost::property_tree::ptree json_terms;
 
-      for(size_t i = 0; i < p.size(); i++) {
-        auto single = make_json(p[i]);
-        postings.push_back(std::make_pair("", single));
+      for(size_t i = 0; i < docs.size(); i++) {
+        auto single = make_json(docs[i]);
+        json_docs.push_back(std::make_pair("", single));
       }
-      
-      tree.add_child("postings", postings);
+      tree.add_child("docs", json_docs);
+
+      for(size_t i = 0; i < terms.size(); i++) {
+        boost::property_tree::ptree term;
+        term.put("", common::wide_to_bytes(terms[i]));
+        json_terms.push_back(std::make_pair("", term));
+      }
+
+      tree.add_child("terms", json_terms);
+
       std::stringstream stream;
       boost::property_tree::write_json(stream, tree, false);
       return stream.str();

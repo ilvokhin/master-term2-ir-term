@@ -11,6 +11,7 @@
 
 #include "common.hpp"
 #include "indexer.hpp"
+#include "ranker.hpp"
 
 namespace ir
 {
@@ -79,13 +80,11 @@ namespace ir
                            const Iter2& y_begin, const Iter2& y_end,
                            size_t window_size);
 
-      boost::property_tree::ptree make_json(const indexer::posting& p);
-
       class searcher
       {
         public:
 
-          searcher(const std::string& filename);
+          searcher(const std::string& index, const std::string& idf);
 
           std::vector<indexer::posting>
             handle_query(const std::vector<std::wstring>& terms) const;
@@ -95,9 +94,11 @@ namespace ir
         private:
           pos_range calc_postings(const std::wstring& term) const;
           std::string
-            serialize_response(const std::vector<indexer::posting>& p) const;
+            serialize_response(const std::vector<std::wstring>& terms,
+                               const std::vector<doc>& doc) const;
 
           indexer::indexer indexer_;
+          ranker ranker_;
       };
 
   }

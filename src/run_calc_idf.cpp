@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 
+#include "common.hpp"
 #include "indexer.hpp"
 #include "idf_table.hpp"
 
@@ -19,7 +20,7 @@ int main(int argc, char* argv[])
   }
 
   std::map<size_t, size_t> in_doc_cnt;
-  std::set<std::tuple<int, int> > docs;
+  std::set<size_t> docs;
 
   std::string line;
   while(std::getline(std::cin, line)) {
@@ -38,16 +39,22 @@ int main(int argc, char* argv[])
         doc_freq = 0;
       }
 
-      if(prev_doc_id != ir::indexer::doc_id(p))
+      if(prev_doc_id != ir::indexer::doc_id(p)) {
         doc_freq++;
-
-      docs.insert(ir::indexer::doc_id(p));
+        auto cur_doc_id = ir::indexer::doc_id(p);
+        int arr[2] = {std::get<0>(cur_doc_id), std::get<1>(cur_doc_id)};
+        size_t cur_hash = ir::common::murmur((void*) arr, sizeof(arr));
+        docs.insert(cur_hash);
+      }
 
       prev_term = p.key;
       prev_doc_id = ir::indexer::doc_id(p);
     }
 
     size_t docs_cnt = docs.size();
+
+    std::cerr << "docs: " << docs_cnt << std::endl;
+    std::cerr << "terms: " << in_doc_cnt.size() << std::endl;
 
     // save idf table
     ir::idf_table::idf_table table;

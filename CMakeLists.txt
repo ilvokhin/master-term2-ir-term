@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 find_package(Boost REQUIRED serialization filesystem system thread)
 
-SET(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11 -pedantic")
+SET(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11 -pedantic -g")
 
 
 include_directories(
@@ -14,14 +14,15 @@ add_library(common src/common.cpp)
 
 add_library(indexer src/indexer.cpp)
 
-add_library(searcher src/searcher.cpp)
-target_link_libraries(searcher indexer common ${Boost_LIBRARIES})
+add_library(idf_table src/idf_table.cpp)
+target_link_libraries(idf_table indexer common ${Boost_LIBRARIES})
+
+add_library(searcher src/searcher.cpp src/ranker.cpp)
+target_link_libraries(searcher idf_table indexer common ${Boost_LIBRARIES})
 
 add_library(merger src/merger.cpp)
 target_link_libraries(merger indexer common searcher ${Boost_LIBRARIES})
 
-add_library(idf_table src/idf_table.cpp)
-target_link_libraries(idf_table indexer common ${Boost_LIBRARIES})
 
 set(SOURCES 
   src/run_indexer.cpp
@@ -42,7 +43,7 @@ add_executable(run_merger src/run_merger.cpp)
 target_link_libraries(run_merger indexer common searcher merger ${Boost_LIBRARIES})
 
 add_executable(tcp_worker src/tcp_worker.cpp)
-target_link_libraries(tcp_worker indexer searcher common ${Boost_LIBRARIES})
+target_link_libraries(tcp_worker idf_table indexer searcher common ${Boost_LIBRARIES})
 
 add_executable(run_calc_idf src/run_calc_idf.cpp)
 target_link_libraries(run_calc_idf idf_table indexer common ${Boost_LIBRARIES})

@@ -51,6 +51,8 @@ public:
                               boost::bind(&session::handle_read, this,
                               boost::asio::placeholders::error,
                               boost::asio::placeholders::bytes_transferred));
+
+      std::cerr << "incoming connection: " << data_;
     }
     else
       delete this;
@@ -66,9 +68,10 @@ private:
 class server
 {
 public:
-  server(boost::asio::io_service& io_service, short port, const std::string& index):
+  server(boost::asio::io_service& io_service, short port,
+         const std::string& index, const std::string& idf):
     io_service_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
-    searcher_(index)
+    searcher_(index, idf)
   {
     session* new_session = new session(io_service_, &searcher_);
     acceptor_.async_accept(new_session->socket(),
@@ -99,13 +102,13 @@ private:
 int main(int argc, char* argv[])
 {
   try {
-    if (argc != 3) {
-      std::cerr << "Usage: tcp_worker <port> <index>" << std::endl;
+    if (argc != 4) {
+      std::cerr << "Usage: tcp_worker <port> <index> <idf-table>" << std::endl;
       return 1;
     }
 
     boost::asio::io_service io_service;
-    server s(io_service, std::atoi(argv[1]), argv[2]);
+    server s(io_service, std::atoi(argv[1]), argv[2], argv[3]);
     io_service.run();
   }
   catch (std::exception& e) {

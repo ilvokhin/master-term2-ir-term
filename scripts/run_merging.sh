@@ -3,6 +3,6 @@
 set -x
 
 bin=tmp
-src=~/crawler/3kk-5kk
+#src=/mnt/BAZA/raw_data2/*/*bin
 
-time ls $src/*.bin | $bin/run_merger $src/merged.bin
+time ls /mnt/BAZA/raw_data2/*/*bin | $bin/run_merger /mnt/BAZA/raw_data2/merged.bin
