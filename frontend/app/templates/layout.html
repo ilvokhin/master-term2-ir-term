@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    {% if query %}
+    <title>{{ query }} | ВГруппах</title>
+    {% else %}
+    <title>ВГруппах</title>
+    {% endif %}
+    
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_r.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_s.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_t.css') }}">
+  </head>
+  
+  {% block body %}{% endblock %}
+</html>

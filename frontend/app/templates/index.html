@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+<body class="body--home">
+  <div class="content-wrap--home">
+    <div class="content--home">
+      <div class="cw--c">
+        <div class="logo-wrap--home">
+          <a class="logo_homepage" href="/"></a>
+        </div>
+	
+        <div class="search-wrap--home">
+          <form id="search_form_homepage" class="search--home search--adv search--focus" name="x" method="GET" action="/">
+            <input autofocus autocomplete="off" id="search_form_input_homepage" class="js-search-input search__input--adv" name="q" tabindex="1" value="" type="text">
+            <input id="search_button_homepage" class="search__button js-search-button" tabindex="2" value="S" type="submit">
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}

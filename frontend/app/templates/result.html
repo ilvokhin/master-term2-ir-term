@@ -1,0 +1,23 @@
+{% macro result(group_id, post_id, title, snippet, query) %}
+  <div class="result results_links_deep highlight_d" id="r1-0">
+    <div class="result__body links_main links_deep">
+      <h2 class="result__title">
+        <a class="result__a" href="https://vk.com/wall-{{ group_id }}_{{ post_id }}">{{ title }}</a>
+      </h2>
+
+      <div class="result__snippet">{{ snippet|safe }}</div>
+      <div class="result__extras">
+        <div class="result__extras__url">
+          <a href="/?q={{ query }}&group={{ group_id }}" title="Поиск по группе">
+          <span class="result__icon"></span>
+          </a>
+
+          <a class="result__url" href="https://vk.com/club{{ group_id }}">
+            <span class="result__url__domain">Перейти к группе</span>
+            <span class="result__url__full"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endmacro %}
