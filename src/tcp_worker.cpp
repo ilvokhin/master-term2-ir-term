@@ -36,7 +36,6 @@ public:
   {
     if (!error) {
       std::string response = searcher_ptr_->handle_raw_query(data_);
-      std::cerr << response << std::endl;
       boost::asio::async_write(socket_, boost::asio::buffer(response),
                                boost::bind(&session::handle_write, this,
                                boost::asio::placeholders::error));
@@ -53,7 +52,6 @@ public:
                               boost::asio::placeholders::error,
                               boost::asio::placeholders::bytes_transferred));
 
-      std::cerr << "incoming connection: " << data_;
     }
     else
       delete this;

@@ -49,8 +49,8 @@ namespace ir
         if(doc_id(*x_cur) == doc_id(*y_cur)) {
           std::vector<indexer::posting> cur_out;
           auto cur_doc_id = doc_id(*x_cur);
-          while(doc_id(*x_cur) == cur_doc_id) {
-            while(doc_id(*y_cur) == cur_doc_id) {
+          while(x_cur != x_end && doc_id(*x_cur) == cur_doc_id) {
+            while(y_cur != y_end && doc_id(*y_cur) == cur_doc_id) {
               int y_cur_pos = (*y_cur).pos;
               if(std::abs(x_cur->pos - y_cur_pos) <= window_size)
                 cur_out.push_back(*y_cur);
