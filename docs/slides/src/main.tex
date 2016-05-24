@@ -88,15 +88,16 @@
   \end{itemize}
 
 \begin{verbatim}
-  {"response":{
-    "count":567,
-    "items":[{
-      "id":18,
-      "from_id":257590636,
-      "to_id":-4999999,
-      "date":1405611209,
-      "post_type":"post",
-      "text":"купальник размер ...
+  {
+    "response":{
+      "count":567,
+      "items":[{
+        "id":18,
+        "from_id":257590636,
+        "to_id":-4999999,
+        "date":1405611209,
+        "post_type":"post",
+        "text":"купальник размер ...
       }, ..., ]
     }
   }
@@ -151,12 +152,54 @@
 
 \begin{frame}
   \frametitle{Фронтенд}
-    TODO
+        \begin{itemize}
+      \item Flask с двумя страницами
+      \item Подгрузка результатов по клику
+    \end{itemize}
+    
+    \begin{figure}[!htb]
+      \centering
+      \includegraphics[scale=0.35]{pics/frontend.png}
+      \caption{Not feeling lucky at all}
+      \label{fig:frontend}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Фронтенд}
+    Что здесь происходит?
+    \begin{itemize}
+      \item Загрузка постов из VK
+      \item Формирование <<сниппетов>>
+    \end{itemize}
+
+\begin{verbatim}
+  {
+    "terms":["УЖ", "ПОЗДН", "НОЧ"],
+    "docs":[{
+      "post_id":2533,
+      "group_id":4711223,
+      "rank":2971.88867
+    }, ..., ]
+  }
+\end{verbatim}
+
 \end{frame}
 
 \begin{frame}
   \frametitle{Сниппеты}
-    TODO
+    Наивное построение, без учёта важности предложений и их границ
+    \begin{itemize}
+      \item Подсветка всех вхождений термов
+      \item Окно в $d$ токенов вокруг каждого вхождения
+    \end{itemize}
+
+    \begin{figure}[!htb]
+      \centering
+      \includegraphics[scale=0.45]{pics/search_result.png}
+      \caption{Поисковый результат}
+      \label{fig:search_result}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
