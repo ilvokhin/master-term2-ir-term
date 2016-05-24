@@ -2,6 +2,7 @@
 #include <utility>
 #include <fstream>
 #include <sstream>
+#include <set>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -143,8 +144,26 @@ namespace ir
       std::vector<std::wstring> terms = common::make_terms(wide_query);
       std::vector<indexer::posting> postings = handle_query(terms);
       std::vector<doc> docs = ranker_.calc_ranked_docs(postings);
+      docs = glue_by_group(docs);
 
       return serialize_response(terms, docs, pretty);
+    }
+
+  
+    std::vector<doc>
+      searcher::glue_by_group(const std::vector<doc>& docs) const
+    {
+      std::set<int> groups;
+      std::vector<doc> glued_docs;
+
+      for(size_t i = 0; i < docs.size(); i++) {
+        if(groups.find(docs[i].group_id) == groups.end()) {
+          glued_docs.push_back(docs[i]);
+          groups.insert(docs[i].group_id);
+        }
+      }
+
+      return glued_docs;
     }
 
     std::string

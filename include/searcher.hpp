@@ -98,6 +98,7 @@ namespace ir
             serialize_response(const std::vector<std::wstring>& terms,
                                const std::vector<doc>& doc,
                                bool pretty) const;
+          std::vector<doc> glue_by_group(const std::vector<doc>& docs) const;
 
           indexer::indexer indexer_;
           ranker ranker_;
