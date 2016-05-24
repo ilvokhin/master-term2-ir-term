@@ -1,8 +1,12 @@
 #include <cstdlib>
+#include <vector>
+#include <memory>
 #include <iostream>
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "searcher.hpp"
 
@@ -12,11 +16,18 @@
 
 using boost::asio::ip::tcp;
 
-class session
+class session: public std::enable_shared_from_this<session>
 {
 public:
+  typedef std::shared_ptr<session> ptr;
+
+  static ptr create(boost::asio::io_service& io_service, ir::searcher::searcher* srch)
+  {
+    return ptr(new session(io_service, srch));
+  }
+
   session(boost::asio::io_service& io_service, ir::searcher::searcher* srch):
-    socket_(io_service), searcher_ptr_(srch)
+    socket_(io_service), data_(max_length), searcher_ptr_(srch)
   { }
 
   tcp::socket& socket()
@@ -27,7 +38,7 @@ public:
   void start()
   {
     socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                            boost::bind(&session::handle_read, this,
+                            boost::bind(&session::handle_read, shared_from_this(),
                             boost::asio::placeholders::error,
                             boost::asio::placeholders::bytes_transferred));
   }
@@ -35,32 +46,40 @@ public:
   void handle_read(const boost::system::error_code& error, size_t bytes_transferred)
   {
     if (!error) {
-      std::string response = searcher_ptr_->handle_raw_query(data_);
+      std::string query = std::string(data_.begin(), data_.begin() + bytes_transferred);
+      log("incoming connection with " + query);
+      std::string response = searcher_ptr_->handle_raw_query(query);
       boost::asio::async_write(socket_, boost::asio::buffer(response),
-                               boost::bind(&session::handle_write, this,
+                               boost::bind(&session::handle_write, shared_from_this(),
                                boost::asio::placeholders::error));
+
+      log(boost::str(boost::format("return response size of %ld bytes for %s")
+                     % response.size() % query));
     }
-    else
-      delete this;
   }
 
   void handle_write(const boost::system::error_code& error)
   {
     if (!error) {
       socket_.async_read_some(boost::asio::buffer(data_, max_length),
-                              boost::bind(&session::handle_read, this,
+                              boost::bind(&session::handle_read, shared_from_this(),
                               boost::asio::placeholders::error,
                               boost::asio::placeholders::bytes_transferred));
 
     }
-    else
-      delete this;
+  }
+
+  void log(const std::string& msg)
+  {
+    std::string trimmed(msg);
+    boost::trim(trimmed); 
+    std::cerr << trimmed << std::endl;
   }
 
 private:
   tcp::socket socket_;
   enum { max_length = 1024 };
-  char data_[max_length];
+  std::vector<char> data_;
   ir::searcher::searcher* searcher_ptr_;
 };
 
@@ -72,24 +91,22 @@ public:
     io_service_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
     searcher_(index, idf)
   {
-    session* new_session = new session(io_service_, &searcher_);
+    session::ptr new_session = session::create(io_service_, &searcher_);
     acceptor_.async_accept(new_session->socket(),
                            boost::bind(&server::handle_accept, this, new_session,
                            boost::asio::placeholders::error));
   }
 
-  void handle_accept(session* new_session, const boost::system::error_code& error)
+  void handle_accept(session::ptr new_session, const boost::system::error_code& error)
   {
     if (!error) {
       new_session->start();
-      new_session = new session(io_service_, &searcher_);
+      new_session = session::create(io_service_, &searcher_);
       acceptor_.async_accept(new_session->socket(),
                              boost::bind(&server::handle_accept, this,
                                          new_session,
                                          boost::asio::placeholders::error));
     }
-    else
-      delete new_session;
   }
 
 private:
