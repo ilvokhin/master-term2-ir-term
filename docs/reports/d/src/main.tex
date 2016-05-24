@@ -1,0 +1,183 @@
+\documentclass[14pt, a4paper]{extreport}
+
+% increase toc depth up to subsubsection
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\usepackage{tabu}
+\usepackage{color}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage[russian]{babel}
+\usepackage[utf8x, utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.misc, shapes.geometric, arrows, shapes.multipart, shapes.arrows}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{amsmath}
+\usepackage{algorithm2e}
+\usepackage{algorithmic}
+\usepackage{xcolor, colortbl}
+\usepackage{mdframed}
+\usepackage{textcase}
+\usepackage{tabularx}
+\usepackage[T2A,T1]{fontenc}
+% 
+\usepackage{indentfirst}
+% setup  page fields
+\usepackage{geometry}
+\geometry{left=25mm}
+\geometry{right=20mm}
+\geometry{top=20mm}
+\geometry{bottom=20mm}
+% set line interval
+\usepackage{setspace}
+\onehalfspacing
+% set footnotesize to 12 pt (for normalsize equal to 14 pt)
+\renewcommand{\footnotesize}{\small}
+
+\usepackage{titlesec}
+\titleformat{\chapter}{\filcenter\bfseries}{\thechapter.}{1em}{}
+\titleformat{\section}{\filcenter\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\filcenter\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\filcenter\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}{\filcenter\bfseries}{\paragraph}{1em}{}
+\titlespacing*{\chapter}{0pt}{10pt}{10pt}
+
+% make page number in top right corner
+\usepackage{fancyhdr}
+% rename abstract
+\AtBeginDocument{\addto\captionsenglish{\def\abstractname{\MakeTextUppercase{Реферат}}}}
+% counters
+\usepackage[figure, table, page, enumiv]{totalcount}
+%
+\addto\captionsrussian
+{
+  \renewcommand{\contentsname}
+    {\hfill{\normalsize\MakeTextUppercase{Содержание}}\hfill}
+}
+%
+\addto\captionsrussian
+{
+  \renewcommand{\bibname}{\hfill\normalsize\MakeTextUppercase{Список использованных источников}\hfill}
+}
+
+\usepackage{tocloft}
+% add dots for chapters
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand\cftchapfont{\mdseries}
+\renewcommand\cftchappagefont{\mdseries}
+% add dot after chapter number
+\renewcommand{\cftchapaftersnum}{.}
+%
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup[figure]{labelsep=space}
+\captionsetup[table]{labelsep=space}
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
+
+%
+% flow chart commands
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=0.5cm, text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=0.5cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, aspect=2, minimum width=1mm, minimum height=1mm, text centered, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+%
+
+% declare new operator for correct \limits usage
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{}
+\date{}
+
+\begin{document}
+\RestyleAlgo{boxruled}
+% style for top right corner page number
+\fancypagestyle{plain}{%
+    \fancyhf{} % clear all header and footer fields
+    \fancyhead[R]{\thepage} % except the right top corner
+    \renewcommand{\headrulewidth}{0pt} % remove line between header and main text
+}
+\pagestyle{plain}
+
+\renewcommand\abstractname{\MakeTextUppercase{Реферат}}
+
+\include{src/title}
+
+\newpage
+\vspace*{-25mm}
+\tableofcontents
+\newpage
+
+% Examples:
+%\addcontentsline{toc}{section}{Заголовок}
+%\section*{Заголовок}
+
+%\addcontentsline{toc}{section}{Введение}
+%\section{Введение}
+\chapter{\MakeTextUppercase{Обкачка}}
+Обкачал первые 5 миллионов групп (не все из них оказались открыты для роботов)
+и все сообщения в них, без комментариев. 
+
+Обкачивал с помощью скрипта на языке программирования Python параллельно
+в 32 процесса с помощью консольной утилиты xargs с ключем -P.
+
+\begin{verbatim}
+    xargs -I{} -P32 bash -c "cat {} |\
+     > python vk_crawler.py > {}.out 2> {}.log"
+\end{verbatim}
+
+\chapter{\MakeTextUppercase{Индексация}}
+Железо: 1 машина, 8 vCPU 2.50GHz, 32GB, 300GB SSD.
+Тестовые данные: $\sim$ 65GB, индексация производилась в 8 потоков.
+Оценил время на обработку тестовой части данных для разных реализаций
+на двух языках программирования:
+
+\begin{itemize}
+  \item Python: около 5 часов.
+  \item С++: 35 минут.
+\end{itemize}
+
+Время индексации на языке программирования Python показалось неприемлимым, поэтому
+дальнейшую разработку решил вести на языке программирования C++.
+
+Итог: индексация по частям: $\sim$ 1.5 часа на все данные + merge 18 минут, размер индекса 75GB.
+
+Сам индекс представляет собой отсортированный mmap-ленный файл по хэшам термов.
+Для хеширования термов использовалась murmur2 хэш-функция~\cite{murmur2}.
+
+В качестве записи использовалась упорядоченная четверка:
+\begin{enumerate}
+\item Хэшированный термин (8 байт).
+\item Идентификатор группы (4 байта).
+\item Идентификатор документа в группе (4 байта).
+\item Позиция вхождения в документ (4 байта).
+\end{enumerate}
+
+Можно было бы использовать меньшие типы, например, для хранения позиции вхождения,
+но это потребовало бы дополнительной проверки, что все вхождения действительно вмещаются в меньший тип.
+Я решил, что выигрыш в размере будет небольшим и отказался от этой идеи.
+
+\chapter{\MakeTextUppercase{Ранжирование и поиск}}
+Списки пересекаются с разной величиной окна $f\times |Q|, f = 1\dots4$,
+пока не наберется достаточно вхождений (1000).
+
+В качестве функции ранжирования была выбрана BM25~\cite{wiki_bm25} со сглаженными
+idf'ами посчитанными по индексу.
+
+\newpage
+\clearpage
+%
+\addcontentsline{toc}{chapter}{\MakeTextUppercase{Список использованных источников}}
+\begin{thebibliography}{}
+\bibitem{wiki_bm25} https://en.wikipedia.org/wiki/Okapi\_BM25 
+\bibitem{boost_asio} http://www.boost.org/doc/libs/1\_55\_0/doc/html/boost\_asio\\
+  /example/cpp11/echo/async\_tcp\_echo\_server.cpp 
+\bibitem{murmur2} https://sites.google.com/site/murmurhash 
+\end{thebibliography}
+
+\end{document}
