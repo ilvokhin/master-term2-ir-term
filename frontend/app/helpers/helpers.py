@@ -84,7 +84,10 @@ def post_query(server, port, query):
         s.close()
 
         reply = json.loads(raw_reply)
-        for doc in reply.get("docs"):
+        if not reply or not reply.get("docs"):
+            return {"terms": [], "docs": []}
+
+        for doc in reply["docs"]:
             doc["group_id"] = int(doc["group_id"])
             doc["post_id"] = int(doc["post_id"])
             doc["rank"] = float(doc["rank"])
@@ -103,7 +106,6 @@ def post_query(server, port, query):
                 fake_doc() for _ in xrange(n)
             ]
         }
-
     return reply
 
 

@@ -31,7 +31,7 @@ def index():
         return render_template(
             'results.html',
             query = query.decode("utf-8"),
-            initial_contents = first_page_rendered,
+            initial_contents = first_page_rendered.strip(),
             results_length = len(fetcher.docs),
             results_per_page = results_per_page
         )

@@ -12,10 +12,7 @@ class Fetcher():
     def store(self, reply):
         self.start = 0
         self.docs = reply["docs"]
-        try:
-            self.docs.sort(key = lambda d: d["rank"], reverse = True)
-        except AttributeError:
-            print('AttributeError happened, docs: {}'.format(docs))
+        self.docs.sort(key = lambda d: d["rank"], reverse = True)
 
         self.terms = map(lambda t: t.encode('iso-8859-1').decode('utf-8'), reply["terms"])
 
