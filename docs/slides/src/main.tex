@@ -83,19 +83,21 @@
 \begin{frame}[fragile]
   \frametitle{Что скачали?}
   \begin{itemize}
-    \item Качали первые пять миллионов групп.
-    \item Около 200 GB сырых данных.
+    \item Стены первых пяти миллионов групп
+    \item Около 200 GB сырых данных
   \end{itemize}
 
 \begin{verbatim}
-  {"response":[11,
-    {
+  {"response":{
+    "count":567,
+    "items":[{
       "id":18,
       "from_id":257590636,
       "to_id":-4999999,
       "date":1405611209,
       "post_type":"post",
       "text":"купальник размер ...
+      }, ..., ]
     }
   }
 \end{verbatim}
@@ -105,9 +107,9 @@
 \begin{frame}[fragile]
   \frametitle{Обкачка}
     \begin{itemize}
-      \item Качали через API (wall.get).
-      \item Пакетами по 100 постов.
-      \item Параллельно в 32 потока\footnote{возможно, нас даже не банили}.
+      \item VK API (wall.get)
+      \item Пакеты по 100 постов
+      \item 32 потока\footnote{возможно, нас даже не банили}
     \end{itemize}
 
   \begin{verbatim}
@@ -119,33 +121,33 @@
 
 \begin{frame}
   \frametitle{Индексация}
-    Железо: 1 машина, 8 vCPU 2.50GHz, 32GB, 300GB SSD. \\
-    Тестовые данные: $\sim$ 65GB, индексация в 8 потоков.
+    Железо: 1 машина, 8 vCPU 2.50GHz, 32GB, 300GB SSD \\
+    Тестовые данные: $\sim$ 65GB, индексация в 8 потоков
     \begin{itemize}
-      \item Python: около 5 часов.
-      \item С++: 35 минут.
+      \item Python: около 5 часов
+      \item С++: 35 минут
     \end{itemize}
     Итог: индексация по частям: $\sim$ 1.5 часа на все данные + merge 18 минут,
-      размер индекса 75GB.
+      размер индекса 75GB
 \end{frame}
 
 \begin{frame}
   \frametitle{Индекс}
     \begin{itemize}
-      \item Mmap-ленный сортированный файл.
-      \item Термы захэшированы.
-      \item По 20 байт на запись.
+      \item mmap-ленный сортированный файл
+      \item Хэширование термов
+      \item 20 байт на запись
     \end{itemize}
 
-    Поиск --- просто бинарный поиск по вектору.
+    Поиск --- просто бинарный поиск по вектору
 \end{frame}
 
 \begin{frame}
   \frametitle{Поиск и ранжирование}
   \begin{itemize}
     \item Пересекаем с разной величиной окна $f\times |Q|, f = 1\dots4$,
-      пока не наберем достаточно вхождений.
-    \item BM25 со сглаженными idf'ми, посчитанными по индексу.
+      пока не наберем достаточно вхождений
+    \item BM25 со сглаженными idf'ми, посчитанными по индексу
   \end{itemize}
 \end{frame}
 
@@ -161,7 +163,7 @@
 
 \begin{frame}
   \frametitle{Оценка качества}
-    Два <<независимых>> эксперта. 10 запросов, по 5 документов в выдаче.
+    Два <<независимых>> эксперта. 10 запросов, по 5 документов в выдаче
     \begin{center}
     \begin{table}[!htb]
       \begin{tabu}{|c|c|c|c|}
