@@ -816,7 +816,7 @@ a:focus {
 	outline:none
 }
 .search__button:hover,.search__button:focus {
-	background-color:#66ad57;
+	background-color:#000;
 	color:white
 }
 .search__button:active {
@@ -830,7 +830,7 @@ a:focus {
 	-webkit-tab-highlight-color:transparent;
 	background-color:#fff;
 	padding-top:16px;
-	border-top:2px solid #de5833;
+	border-top:2px solid #000;
 	position:relative;
 	z-index:15
 }
