@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 find_package(Boost REQUIRED serialization filesystem system thread)
 
-SET(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11 -pedantic -g")
+SET(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11 -pedantic -g -fopenmp -march=native")
 
 
 include_directories(
@@ -16,6 +16,9 @@ add_library(indexer src/indexer.cpp)
 
 add_library(idf_table src/idf_table.cpp)
 target_link_libraries(idf_table indexer common ${Boost_LIBRARIES})
+
+add_library(doc_info src/doc_info.cpp)
+target_link_libraries(doc_info common ${Boost_LIBRARIES})
 
 add_library(searcher src/searcher.cpp src/ranker.cpp)
 target_link_libraries(searcher idf_table indexer common ${Boost_LIBRARIES})
@@ -47,6 +50,9 @@ target_link_libraries(tcp_worker idf_table indexer searcher common ${Boost_LIBRA
 
 add_executable(run_calc_idf src/run_calc_idf.cpp)
 target_link_libraries(run_calc_idf idf_table indexer common ${Boost_LIBRARIES})
+
+add_executable(run_collect_doc_info src/run_collect_doc_info.cpp)
+target_link_libraries(run_collect_doc_info doc_info indexer common ${Boost_LIBRARIES})
 
 add_executable(get_idf src/get_idf.cpp)
 target_link_libraries(get_idf idf_table common ${Boost_LIBRARIES})
