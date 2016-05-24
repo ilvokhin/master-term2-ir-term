@@ -7,8 +7,12 @@ from app.helpers.helpers import (
     make_results,
     post_query
 )
+from app.helpers.fetcher import Fetcher
 
 mod = Blueprint('general', __name__)
+
+results_per_page = 10
+fetcher = Fetcher(results_per_page)
 
 @mod.route('/')
 def index():
@@ -21,14 +25,19 @@ def index():
         if group_id != -1:
             reply["docs"] = filter(lambda x: x["group_id"] == group_id, reply["docs"])
         
-        results = make_results(
-            reply,
-            snippet_distance=8,
-            max_snippet_length=500
+        fetcher.store(reply)
+        first_page_results = fetcher.next_page()
+        first_page_rendered = render_template('results_block.html', results = first_page_results)
+        return render_template(
+            'results.html',
+            query = query.decode("utf-8"),
+            initial_contents = first_page_rendered,
+            results_length = len(fetcher.docs),
+            results_per_page = results_per_page
         )
-
-                
-        return render_template('results.html', query=query.decode("utf-8"), results=results)
 
     return render_template('index.html')
 
+@mod.route('/next_page')
+def next_page():
+    return render_template('results_block.html', results = fetcher.next_page())

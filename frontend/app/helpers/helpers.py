@@ -96,7 +96,7 @@ def post_query(server, port, query):
             "post_id": random.randint(1, 10**2) \
         }
         
-        n = random.randint(0, 10)
+        n = random.randint(0, 100)
         reply = {
             "terms": "the quick brown fox jumps over the lazy dog".split(),
             "docs": [
@@ -108,12 +108,7 @@ def post_query(server, port, query):
 
 
 @time_exec
-def make_results(reply, snippet_distance, max_snippet_length):
-    terms, docs = map(lambda t: t.encode('iso-8859-1').decode('utf-8'), reply["terms"]), reply["docs"]
-    try:
-        docs.sort(key = lambda d: d["rank"], reverse=True)
-    except AttributeError:
-        print 'AttributeError', docs
+def make_results(docs, terms, snippet_distance, max_snippet_length):
     title_stub = "Название этой группы недоступно".decode("utf-8")
     text_stub = "Содержимое этого поста недоступно".decode("utf-8")
     
