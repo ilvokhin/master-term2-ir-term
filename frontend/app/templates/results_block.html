@@ -1,4 +1,4 @@
-{% macro result(group_id, post_id, title, snippet, query) %}
+{% macro result_block(group_id, post_id, title, snippet) %}
   <div class="result results_links_deep highlight_d" id="r1-0">
     <div class="result__body links_main links_deep">
       <h2 class="result__title">
@@ -8,9 +8,7 @@
       <div class="result__snippet">{{ snippet|safe }}</div>
       <div class="result__extras">
         <div class="result__extras__url">
-          <a href="/?q={{ query }}&group={{ group_id }}" title="Поиск по группе">
           <span class="result__icon"></span>
-          </a>
 
           <a class="result__url" href="https://vk.com/club{{ group_id }}">
             <span class="result__url__domain">Перейти к группе</span>
@@ -21,3 +19,7 @@
     </div>
   </div>
 {% endmacro %}
+
+{% for result in results %}
+{{ result_block(result.group_id, result.post_id, result.title, result.snippet) }}
+{% endfor %}

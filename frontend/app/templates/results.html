@@ -1,9 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
 
-{% from 'result.html' import result %}
-
-
 <body class="body--serp"> 
   <div class="site-wrapper js-site-wrapper">
     <div class="header-wrap js-header-wrap" id="header_wrapper">
@@ -30,20 +27,19 @@
       <div class="cw">
         <div class="results-wrapper" id="links_wrapper">
           <div class="results full-urls" id="links">
+            <div id="results">
+              {% if initial_contents %}
+                {{ initial_contents|safe }}
+              {% else %}
+                <div class="no-results" id="nrreld"><div>Ничего не найдено!</div><div>
+              {% endif %}
+            </div>
             
-            {% if results %}
-              {% for item in results %}
-              {{ result(item.group_id, item.post_id, item.title, item.snippet, query) }}
-              {% endfor %}
-
-              <div class="result result--more" id="rld-1">
-                <a class="result--more__btn btn--alt btn btn--full" href="javascript:;">Ещё</a>
-              </div>
-
-            {% else %}
-              <div class="no-results" id="nrreld"><div>Ничего не найдено!</div><div>
+            {% if results_length > results_per_page %}
+            <div class="result result--more" id="rld-1">
+              <a class="result--more__btn btn--alt btn btn--full">Ещё</a>
+            </div>
             {% endif %}
-
           </div>
         </div>
       </div>
@@ -55,5 +51,23 @@
 
   </div>
 </body>
-
+  <script type = "text/javascript" language = "javascript">
+    $(document).ready(function() {
+      $("#rld-1").click(function(event){
+        $.ajax({
+          type: "GET",
+          url: '/next_page',
+          cache: false,
+          success: function(html) {
+            if(html.trim()) {
+              $('#results').append(html);
+            } else
+            {
+              $('#rld-1').remove();
+            }
+          }
+        });
+      });
+    });
+  </script>
 {% endblock %}
