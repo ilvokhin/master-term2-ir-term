@@ -146,7 +146,8 @@ def make_snippet(text, terms, dist, max_length):
     punct_split = lambda x: (''.join([ch.upper() if ch not in string.punctuation else ' ' for ch in x])).split(' ')
     
     # whether a token or list of tokens starts with a normalized search term
-    checker = lambda i, y: any([t.startswith(y) for t in tokens[i]]) if isinstance(tokens[i], list) else tokens[i].startswith(y)
+    swc = lambda token, term: token.startswith(term) and sum(map(lambda l: l[0] == l[1], zip(token, term))) >= len(token) / 2.
+    checker = lambda i, term: any([swc(t, term) for t in tokens[i]]) if isinstance(tokens[i], list) else swc(tokens[i], term)
     
     # find all words we need to highlight
     tokens = map(punct_split, split_text)
