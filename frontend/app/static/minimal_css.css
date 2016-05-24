@@ -79,7 +79,7 @@
 	cursor:pointer
 }
 .result__title {
-	position:static;
+	position:/static;
 	overflow:hidden;
 	display:block;
 	font-size:1.38em;
@@ -146,7 +146,7 @@
 	width:16px;
 	height:16px;
 	margin-right:0.5em;
-        background:url("/static/logo.svg") no-repeat;
+        background:url("/static/logo.png") no-repeat;
 	background-size:contain;
 }
 .result__extras__url {
@@ -628,45 +628,45 @@ a:focus {
 	font-size:0px
 }
 .logo_homepage {
-	background-image:url("/static/logo.svg");
+	background-image:url("/static/logo.png");
 	background-size:250px 200px;
 	width:250px;
 	height:200px
 }
 @media only screen and (max-width: 425px) {.logo_homepage {
-		background-image:url("/static/logo.svg");
+		background-image:url("/static/logo.png");
 		background-size:166px 130px;
 		width:166px;
 		height:130px
 	}}
 @media only screen and (max-height: 382.5px) and (max-width: 634px), only screen and (max-height: 361.25px) {.logo_homepage {
-		background-image:url("/static/logo.svg");
+		background-image:url("/static/logo.png");
 		background-size:275px 62px;
 		width:275px;
 		height:62px
 	}}
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-ms-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dppx) {.logo_homepage {
-		background-image:url("/static/logo.svg")
+		background-image:url("/static/logo.png")
 	}}
 @media only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: 425px), only screen and (-moz-min-device-pixel-ratio: 2) and (max-width: 425px), only screen and (min--moz-device-pixel-ratio: 2) and (max-width: 425px), only screen and (-ms-min-device-pixel-ratio: 2) and (max-width: 425px), only screen and (min-device-pixel-ratio: 2) and (max-width: 425px), only screen and (min-resolution: 192dppx) and (max-width: 425px) {.logo_homepage {
-		background-image:url("/static/logo.svg")
+		background-image:url("/static/logo.png")
 	}}
 @media only screen and (-webkit-min-device-pixel-ratio: 2) and (max-height: 382.5px) and (max-width: 634px), only screen and (-moz-min-device-pixel-ratio: 2) and (max-height: 382.5px) and (max-width: 634px), only screen and (min--moz-device-pixel-ratio: 2) and (max-height: 382.5px) and (max-width: 634px), only screen and (-ms-min-device-pixel-ratio: 2) and (max-height: 382.5px) and (max-width: 634px), only screen and (min-device-pixel-ratio: 2) and (max-height: 382.5px) and (max-width: 634px), only screen and (min-resolution: 192dppx) and (max-height: 382.5px) and (max-width: 634px), only screen and (-webkit-min-device-pixel-ratio: 2) and (max-height: 361.25px), only screen and (-moz-min-device-pixel-ratio: 2) and (max-height: 361.25px), only screen and (min--moz-device-pixel-ratio: 2) and (max-height: 361.25px), only screen and (-ms-min-device-pixel-ratio: 2) and (max-height: 361.25px), only screen and (min-device-pixel-ratio: 2) and (max-height: 361.25px), only screen and (min-resolution: 192dppx) and (max-height: 361.25px) {.logo_homepage {
-		background-image:url("/static/logo.svg")
+		background-image:url("/static/logo.png")
 	}}
 .header__logo {
-	background-image:url("/static/logo.svg");
+	background-image:url("/static/logo.png");
 	background-size:50px 50px
 }
 @media only screen and (min-width: 864px) {.header__logo {
-    	        background-image:url("/static/logo.svg");
+    	        background-image:url("/static/logo.png");
 		background-size:60px 60px
 	}}
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-ms-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dppx) {.header__logo {
-		background-image:url("/static/logo.svg")
+		background-image:url("/static/logo.png")
 	}}
 @media only screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 864px), only screen and (-moz-min-device-pixel-ratio: 2) and (min-width: 864px), only screen and (min--moz-device-pixel-ratio: 2) and (min-width: 864px), only screen and (-ms-min-device-pixel-ratio: 2) and (min-width: 864px), only screen and (min-device-pixel-ratio: 2) and (min-width: 864px), only screen and (min-resolution: 192dppx) and (min-width: 864px) {.header__logo {
-		background-image:url("/static/logo.svg")
+		background-image:url("/static/logo.png")
 	}}
 
 
