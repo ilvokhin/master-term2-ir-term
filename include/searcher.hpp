@@ -42,7 +42,7 @@ namespace ir
                       const pos_range& y_begin, const pos_range& y_end);
 
       std::vector<indexer::posting>
-        intersect_n(const std::vector<pos_range>& ranges);
+        intersect_n(const std::vector<pos_range>& ranges, size_t factor);
 
       template <typename T>
       void merge_n_impl(const std::vector<pos_range>& ranges, T& out)

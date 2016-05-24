@@ -82,9 +82,9 @@ namespace ir
       }
 
     std::vector<indexer::posting>
-      intersect_n(const std::vector<pos_range>& ranges)
+      intersect_n(const std::vector<pos_range>& ranges, size_t factor)
     {
-      const size_t window_size = 1 * ranges.size();
+      const size_t window_size = factor * ranges.size();
       std::vector<size_t> order;
       order.reserve(ranges.size());
 
@@ -132,7 +132,14 @@ namespace ir
       for(size_t i = 0; i < terms.size(); i++)
         postings.push_back(calc_postings(terms[i]));
 
-      return intersect_n(postings);
+      std::vector<indexer::posting> out;
+      for(size_t factor = 1; factor < 4; factor++) {
+        std::vector<indexer::posting> tmp = intersect_n(postings, factor);
+        std::copy(tmp.begin(), tmp.end(), std::back_inserter(out));
+        if(out.size() > 1000)
+          break;
+      }
+      return out;
     }
 
     std::string searcher::handle_raw_query(const std::string& raw_query, bool pretty) const

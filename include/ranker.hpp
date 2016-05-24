@@ -36,7 +36,7 @@ namespace ir
           calc_ranked_docs(const std::vector<indexer::posting>& postings) const;
 
       private:
-        doc calc_score_bm15(const std::vector<indexer::posting>& postings) const;
+        doc calc_score_bm25(const std::vector<indexer::posting>& postings) const;
 
         idf_table::idf_table table_;
     };
