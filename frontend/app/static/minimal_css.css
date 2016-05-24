@@ -1040,3 +1040,9 @@ html {
 	}}
 
 
+.no-results {
+	font-size:1.1667em;
+	padding-top:2em;
+	padding-left:10px;
+	padding-bottom:7px
+}

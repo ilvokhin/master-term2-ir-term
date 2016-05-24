@@ -31,20 +31,20 @@
         <div class="results-wrapper" id="links_wrapper">
           <div class="results full-urls" id="links">
             
-            {% for item in results %}
-            {{ result(item.group_id, item.post_id, item.title, item.snippet, query) }}
-            {% endfor %}
+            {% if results %}
+              {% for item in results %}
+              {{ result(item.group_id, item.post_id, item.title, item.snippet, query) }}
+              {% endfor %}
 
-            <div class="result result--more" id="rld-1">
-              <a class="result--more__btn btn--alt btn btn--full" href="javascript:;">Ещё</a>
-            </div>
+              <div class="result result--more" id="rld-1">
+                <a class="result--more__btn btn--alt btn btn--full" href="javascript:;">Ещё</a>
+              </div>
 
+            {% else %}
+              <div class="no-results" id="nrreld"><div>Ничего не найдено!</div><div>
+            {% endif %}
 
-            <div id="rrd-1" style="display: none;">
-            </div>
           </div>
-
-
         </div>
       </div>
     </div>
