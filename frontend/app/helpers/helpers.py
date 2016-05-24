@@ -68,7 +68,7 @@ class Result(object):
 @time_exec
 def post_query(server, port, query):
     if True:
-        buf_size = 1024
+        buf_size = 4096
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(30)
         
