@@ -84,7 +84,7 @@ namespace ir
     std::vector<indexer::posting>
       intersect_n(const std::vector<pos_range>& ranges)
     {
-      const size_t window_size = 2 * ranges.size();
+      const size_t window_size = 1 * ranges.size();
       std::vector<size_t> order;
       order.reserve(ranges.size());
 
